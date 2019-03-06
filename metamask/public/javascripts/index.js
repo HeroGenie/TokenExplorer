@@ -1,4 +1,4 @@
-var FinToken;
+var Token;
 
 // DEBUG=metamask:* npm start
 
@@ -13,13 +13,18 @@ window.addEventListener('load', function () {
         // Probably show them a message prompting them to install
     }
     // Now you can start your app & access web3 freely:
-    FinToken = web3.eth.contract(finToken.abi).at('0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
+
+    // Fin
+    // Token = web3.eth.contract(finToken.abi).at('0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
     // 0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7 // contract
-    // 0x1aeE225C190264EB3eeaef4E18170E2eae98de01
+
+    // Tos
+    Token = web3.eth.contract(finToken.abi).at('0x97999958F012eA2d0433CCa8d5Ee7e222e71751c');
+
 });
 
 function pausedPublic() {
-    return new Promise((resolve, reject) => FinToken.pausedPublic((err, result) => {
+    return new Promise((resolve, reject) => Token.pausedPublic((err, result) => {
         console.log(`pausedPublic: ${result}`);
         resolve();
     }));
@@ -28,7 +33,7 @@ function pausedPublic() {
 
 
 function pause() {
-    return new Promise((resolve, reject) => FinToken.pause(false, false, (err, result) => {
+    return new Promise((resolve, reject) => Token.pause(false, false, (err, result) => {
         console.log(result);
         resolve();
     }));
