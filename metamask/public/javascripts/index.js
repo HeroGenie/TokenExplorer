@@ -12,16 +12,32 @@ window.addEventListener('load', function () {
         // Handle the case where the user doesn't have Metamask installed
         // Probably show them a message prompting them to install
     }
-    // Now you can start your app & access web3 freely:
 
     // Fin
-    // Token = web3.eth.contract(finToken.abi).at('0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
-    // 0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7 // contract
-
-    // Tos
-    Token = web3.eth.contract(finToken.abi).at('0x97999958F012eA2d0433CCa8d5Ee7e222e71751c');
-
+    Token = web3.eth.contract(finToken.abi).at('0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
 });
+
+function balance() {
+    // input에 입력한 주소 가져오기
+    var userAccount = document.getElementById("user_input").value
+    // 계좌 잔액 구해오기
+    new Promise((resolve, reject) => Token.balanceOf(userAccount, function (err, amount) {
+        console.log(`balance of ${userAccount}: ${amount.toNumber()}`);
+        resolve();
+    }));
+}
+
+function balance2() {
+    // 메타마스크에서 주소 가져오기
+    web3.eth.getAccounts().then(function (result) {
+        var userAccount = result[0]; // address
+        // 계좌 잔액 구해오기
+        new Promise((resolve, reject) => Token.balanceOf(userAccount, function (err, amount) {
+            console.log(`balance of ${userAccount}: ${amount.toNumber()}`);
+            resolve();
+        }));
+    })
+}
 
 function pausedPublic() {
     return new Promise((resolve, reject) => Token.pausedPublic((err, result) => {
@@ -29,8 +45,6 @@ function pausedPublic() {
         resolve();
     }));
 }
-
-
 
 function pause() {
     return new Promise((resolve, reject) => Token.pause(false, false, (err, result) => {

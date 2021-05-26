@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <title>Token Explorer</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <script language="javascript" type="text/javascript" src="javascripts/FinToken.js"></script>
+    <script language="javascript" type="text/javascript" src="javascripts/index.js"></script>
   </head>
 
   <body>
-    <script language="javascript" type="text/javascript" src="javascripts/FinToken.js"></script>
-    <script language="javascript" type="text/javascript" src="javascripts/TosToken.js"></script>
-    <script language="javascript" type="text/javascript" src="javascripts/index.js"></script>
-    <script language="javascript" type="text/javascript" src="javascripts/instructions.js"></script>
+    <input id="user_input" value=""/>
+    <br/>
+    <button onsubmit="balance()">입력한 주소로 token 잔고 알아오기</button>
+    <br/>
+    <button onsubmit="balance2()">메타마스크 주소로 token 잔고 알아오기</button>
   </body>
 
 </html>

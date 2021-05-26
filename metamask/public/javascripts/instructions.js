@@ -3,8 +3,8 @@
 //         .then(() => locktoken.transfer("0xC94B8d331DB79479dF90D9f1565F3886426E76ad", "0xB70911878e27bA77F49688C5531c10EC2ed4ecF3", 5000000000000000000000000000));
 // }
 
-// function balance2() {
-//     return new Promise((resolve, reject) => FinToken.balanceOf("0x1aeE225C190264EB3eeaef4E18170E2eae98de01", function (err, amount) {
+// function balance2(address) {
+//     return new Promise((resolve, reject) => FinToken.balanceOf(address, function (err, amount) {
 //         console.log(`balance of ${address}: ${amount.toNumber()}`);
 //         resolve();
 //     }));
