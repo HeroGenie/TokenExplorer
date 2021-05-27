@@ -1,156 +1,74 @@
 var Token;
-
-// DEBUG=metamask:* npm start
+const ethEnabled = () => {
+    if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+        window.ethereum.enable();
+        return true;
+    }
+    return false;
+}
 
 window.addEventListener('load', function () {
-    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-    if (typeof web3 !== 'undefined') {
-        // Use Mist/MetaMask's provider
-        web3 = new Web3(web3.currentProvider);
-    } else {
-        console.log("metamask is not loaded");
-        // Handle the case where the user doesn't have Metamask installed
-        // Probably show them a message prompting them to install
+    if (!ethEnabled()) {
+        alert("Please install MetaMask to use this dApp!");
+        return
     }
-
-    // Fin
-    Token = web3.eth.contract(finToken.abi).at('0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
+    Token = new window.web3.eth.Contract(finToken.abi, '0x1Dd7B2878B6d5671Ed602e60818b0D9A0CD1CDF7');
 });
 
 function balance() {
     // input에 입력한 주소 가져오기
-    var userAccount = document.getElementById("user_input").value
+    const userAccount = document.getElementById("user_input").value;
+    console.log(`userAccount: ${userAccount}`);
+    if (!userAccount){
+        alert("주소를 넣어주세요");
+        return
+    }
+
     // 계좌 잔액 구해오기
-    new Promise((resolve, reject) => Token.balanceOf(userAccount, function (err, amount) {
-        console.log(`balance of ${userAccount}: ${amount.toNumber()}`);
-        resolve();
-    }));
+    // 함수에 sol에서 작성한 파라미터 갯수만큼 넣어서 호출 / balanceOf 함수는 파라미터가 지갑주소 하나
+    Token.methods.balanceOf(userAccount).call()
+        .then(function(result){
+            //the result holds your Token Balance that you can assign to a var
+            const myTokenBalance = result;
+            console.log(`My Fin TokenBalance: ${myTokenBalance}`);
+            document.getElementById('demo1').innerHTML = `My Fin TokenBalance: ${myTokenBalance}`;
+        });
 }
 
-function balance2() {
+async function balance2() {
     // 메타마스크에서 주소 가져오기
-    web3.eth.getAccounts().then(function (result) {
-        var userAccount = result[0]; // address
-        // 계좌 잔액 구해오기
-        new Promise((resolve, reject) => Token.balanceOf(userAccount, function (err, amount) {
-            console.log(`balance of ${userAccount}: ${amount.toNumber()}`);
-            resolve();
-        }));
-    })
+    const accounts = await web3.eth.getAccounts()
+    const userAccount = accounts[0]; // address
+    console.log(`account: ${userAccount}`);
+    document.getElementById('demo2').innerHTML = `account: ${userAccount}`;
+
+    // 계좌 잔액 구해오기
+    // 함수에 sol에서 작성한 파라미터 갯수만큼 넣어서 호출 / balanceOf 함수는 파라미터가 지갑주소 하나
+    Token.methods.balanceOf(userAccount).call()
+        .then(function(result){
+            const myTokenBalance = result;
+            console.log(`My Fin TokenBalance: ${myTokenBalance}`);
+            document.getElementById('demo2').innerHTML = `account: ${userAccount}`
+                + '<br/>'
+                + `My Fin TokenBalance: ${myTokenBalance}`;
+        });
 }
 
-function pausedPublic() {
-    return new Promise((resolve, reject) => Token.pausedPublic((err, result) => {
-        console.log(`pausedPublic: ${result}`);
-        resolve();
-    }));
+async function transferOwnership() {
+    // 메타마스크에서 주소 가져오기
+    const accounts = await web3.eth.getAccounts()
+    const userAccount = accounts[0]; // address
+
+    // 권한을 넘겨받을 지갑주소
+    const newOwnerAccount = '0x1df5d7df9ce408be2d17596229a7a98290a0d32c';
+
+    // 함수에 sol에서 작성한 파라미터 갯수만큼 넣어서 호출 / transferOwnership 함수는 파라미터가 지갑주소 하나
+    Token.methods.transferOwnership(newOwnerAccount).send({from: userAccount})
+        .then(function(receipt){
+            console.log(`receipt: ${receipt}`);
+            document.getElementById('demo3').innerHTML = `account: ${userAccount}`
+                + '<br/>'
+                + `result: ${receipt}`;
+        });
 }
-
-function pause() {
-    return new Promise((resolve, reject) => Token.pause(false, false, (err, result) => {
-        console.log(result);
-        resolve();
-    }));
-}
-
-
-
-
-
-//
-// function totalSupply() {
-//     return new Promise((resolve, reject) => finToken.totalSupply((err, result) => {
-//         console.log(`total supply: ${result.toNumber()}`);
-//         resolve();
-//     }));
-// }
-//
-// function transfer(from, to, amount) {
-//     return new Promise((resolve, reject) => finToken.transfer(to, amount, {from: from}, (err, result) => {
-//         console.log(`transfer from ${from} to ${to} ${amount}`);
-//         resolve();
-//     }));
-//
-//     // "name": "transfer",
-//     //     "outputs": [
-//     //     {
-//     //         "name": "",
-//     //         "type": "bool"
-//     //     }
-//     // ],
-//
-// }
-//
-// function balanceOf(address) {
-//     return new Promise((resolve, reject) => FinToken.balanceOf(address, function (err, amount) {
-//         console.log(`balance of ${address}: ${amount.toNumber()}`);
-//         resolve();
-//     }));
-// }
-//
-// function totalBalanceOf(address) {
-//     return new Promise((resolve, reject) => FinToken.totalBalanceOf(address, (err, result) => {
-//         console.log(result.toNumber());
-//         resolve();
-//     }));
-// }
-//
-// function lock(reason, amount, time, addr, alias) {
-//     let lockDate = new Date(time);
-//     let now = new Date();
-//     let timeGap = Math.floor((lockDate - now) / 1000);
-//     console.log(`time gap: ${timeGap}`);
-//     if (timeGap <= 0) return;
-//     return new Promise((resolve, reject) => finToken.lock(web3.fromAscii(reason), amount, timeGap, addr, (err, result) => {
-//         console.log(`Lock ${alias}\'s token with ${amount} until ${time}`);
-//         resolve();
-//     }));
-// }
-//
-// function tokensLocked(address, reason) {
-//     return new Promise((resolve, reject) => finToken.tokensLocked(address, reason, function (err, result) {
-//         console.log(`${reason}: ${result.toNumber()}`);
-//         resolve();
-//     }));
-// }
-//
-// function getUnlockableTokens(address) {
-//     return new Promise((resolve, reject) => finToken.getUnlockableTokens.call(address, function (err, result) {
-//         console.log(result.toNumber());
-//         resolve();
-//     }));
-// }
-//
-// function mint(address, amount) {
-//     return new Promise((resolve, reject) => finToken.mint(address, amount, (err, result) => {
-//         console.log(result);
-//         resolve();
-//     }));
-// }
-//
-// function burn(address, amount) {
-//     return new Promise((resolve, reject) => finToken.burn(address, amount, (err, result) => {
-//         console.log(result);
-//         resolve();
-//     }));
-//
-//     // "constant": false,
-//     //     "inputs": [
-//     //     {
-//     //         "name": "_value",
-//     //         "type": "uint256"
-//     //     }
-//     // ],
-//     //     "name": "burn",
-//     //     "outputs": [
-//     //     {
-//     //         "name": "",
-//     //         "type": "bool"
-//     //     }
-//     // ],
-//     //     "payable": false,
-//     //     "stateMutability": "nonpayable",
-//     //     "type": "function",
-//     //     "signature": "0x42966c68"
-//
-// }

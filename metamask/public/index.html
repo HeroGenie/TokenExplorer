@@ -4,16 +4,25 @@
     <meta charset="UTF-8">
     <title>Token Explorer</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script language="javascript" type="text/javascript" src="javascripts/FinToken.js"></script>
     <script language="javascript" type="text/javascript" src="javascripts/index.js"></script>
   </head>
 
   <body>
+    <p>
+      ex) 0x1df5d7df9ce408be2d17596229a7a98290a0d32c -> 436088687000000000000000000 (== 436,088,687개)
+    </p>
     <input id="user_input" value=""/>
+    <button onclick="balance()">입력한 주소로 token 잔고 알아오기</button>
+    <p id="demo1"></p>
     <br/>
-    <button onsubmit="balance()">입력한 주소로 token 잔고 알아오기</button>
+    <button onclick="balance2()">메타마스크 주소로 token 잔고 알아오기</button>
     <br/>
-    <button onsubmit="balance2()">메타마스크 주소로 token 잔고 알아오기</button>
+    <p id="demo2"></p>
+    <button onclick="transferOwnership()">메타마스크 주소로 transferOwnership 컨트랙호출</button>
+    <br/>
+    <p id="demo3"></p>
   </body>
 
 </html>
